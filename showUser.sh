@@ -12,5 +12,5 @@ GROUP=$(groups $USER | cut -d ' ' -f 3,4)
 
 echo Vous êtes : $USER
 echo Avec ID : $ID
-echo Present dans les groups : $GROUPS
+echo Present dans les groups : $GROUP
 exit 0
