@@ -8,4 +8,3 @@
 
 
 cat /etc/passwd | grep $USER | cut -d ':' -f 3 >> ./test.txt
-aze
