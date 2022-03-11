@@ -7,4 +7,5 @@
 # des groupes de l'utilisateur
 
 
-cat /etc/passwd | grep $USER | cut -d ':' -f 3 >> ./test.txt
+ID=$(cat /etc/passwd | grep $USER | cut -d ':' -f 3 >> ./test.txt)
+echo $ID
