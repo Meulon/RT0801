@@ -9,5 +9,4 @@
 
 tar -cvf $1 $2
 scp $1 $3:$4@$5
-test
 exit 0
