@@ -1,17 +1,30 @@
 #!/bin/bash
-# Pas de paramètres
-# Création d'un fichier à chaque utilisation
-# Affichage et enregistrement
-# de l'utilisateur
-# l'id de l'utilisateur
-# des groupes de l'utilisateur
 
+#VARIABLES
+
+GROUP=$(groups)
 ID=$(cat /etc/passwd | grep $USER | cut -d ':' -f 3)
-GROUP=$(groups $USER | cut -d ' ' -f 3,4)
-TIMESTAMP=$(date | cut -d ' ' -f 4)
-FILENAME=$USER\_$TIMESTAMP.txt
 
-echo Vous êtes : $USER | tee $FILENAME
-echo Avec ID : $ID | tee -a $FILENAME
-echo Present dans les groups : $GROUP | tee -a $FILENAME
+showUser(){
+	echo USER: $USER 
+	echo ID: $ID
+	echo GROUPS: $GROUP
+}
+
+exportToFile(){
+	pwd=$(pwd)
+	version=1
+	filename=$USER\_INFO_V$version.txt
+	while [[ -e $filename ]]
+	do
+		let version++
+		filename=$USER\_INFO_V$version.txt
+	done
+	showUser > $filename
+	echo recap created here: $pwd
+}
+
+showUser
+exportToFile
+
 exit 0
