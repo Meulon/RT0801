@@ -19,18 +19,11 @@
 hostname=$1
 idNIC=$2
 IP=$3
-IP_GW=$4
-IP_DNS=$5
-
-#ens3
-#sudo ip link set dev ens4 down
-#sudo ip addr add 192.168.0.2/24 dev ens4
-#sudo ip link set dev ens4 up
-#ping google.fr
+ipDNS=$4
 
 changeHostname(){
 	sed -i 1d /etc/hostname
-	echo $1 >> /etc/hostname
+	echo $hostname >> /etc/hostname
 }
 
 checkNIC(){
@@ -49,10 +42,52 @@ disableNIC(){
 	fi	
 }
 
+
 changeIPNIC(){
+	oldIP=$(ip addr show dev $idNIC | grep -E -o "([0-9]{1,3}[\.]){3}[0-9]{1,3}/[0-9]{1,2}")
+	$(ip addr del $oldIP dev $idNIC)
 	$(ip addr add $IP dev $idNIC)
 }
 
-#changeHostname
+enableNIC(){
+	$(ip link set dev $idNIC up)
+}
+
+changeDNS(){
+	timestamp=$(date | cut -d ' ' -f 4)
+	mv /etc/resolv.conf /etc/resolv.conf.old.$timestamp
+	echo nameserver $ipDNS >> /etc/resolv.conf
+}
+
+
+testNET(){
+	msgPING="test outside access:"
+	msgDNS="test DNS:"
+        
+	ping -c 3 8.8.8.8 >/dev/null
+        codePING=$? 
+
+        dig google.fr >/dev/null
+        codeDNS=$?
+
+        if [[ $codePING -eq 0 ]]; then
+                echo $msgPING OK
+        else
+                echo $msgPING KO
+        fi
+
+        if [[ $codeDNS -eq 0 ]]; then
+                echo $msgDNS OK
+        else
+                echo $msgDNS KO
+        fi
+
+}
+
+changeHostname
 checkNIC
 disableNIC
+changeIPNIC
+enableNIC
+changeDNS
+testNET
