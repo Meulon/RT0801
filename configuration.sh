@@ -25,7 +25,8 @@ createDummyNIC(){
 	ip link show dummy0 &>/dev/null
 	if [[ $? == 1 ]]; then
 		ip link add type dummy0
-		echo interface dummy0 created 
+		echo interface dummy0 created
+	fi 
 }
 
 changeHostname(){
