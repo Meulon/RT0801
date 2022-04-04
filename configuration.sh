@@ -21,8 +21,15 @@ idNIC=$2
 IP=$3
 ipDNS=$4
 
+createDummyNIC(){
+	ip link show dummy0 &>/dev/null
+	if [[ $? == 1 ]]; then
+		ip link add type dummy0
+		echo interface dummy0 created 
+}
+
 changeHostname(){
-	sed -i 1d /etc/hostname
+	sed -i 1d /etc/hostname &>/dev/null
 	if [[ $? -ne 0 ]]; then
 		echo Permission denied
 		exit 1
@@ -38,9 +45,10 @@ changeHostname(){
 }
 
 checkNIC(){
-	getNIC=$(ip link show $idNIC)
+	ip link show $idNIC &>/dev/null
 	if [[ $? == 1 ]]; then
 		echo NIC does not exist
+		exit 1
 	else
 		disableNIC
 		changeIPNIC
@@ -72,8 +80,10 @@ changeDNS(){
 
 
 testNET(){
-	msgPING="test outside access:"
-	msgDNS="test DNS:"
+	msgPINGSuccess="test outside access: OK"
+	msgDNSSuccess="test DNS: OK"
+	msgPINGError="test outside access: NOK"
+	msgDNSError="test DNS: NOK"
         
 	ping -c 3 8.8.8.8 >/dev/null
         codePING=$? 
@@ -82,15 +92,15 @@ testNET(){
         codeDNS=$?
 
         if [[ $codePING -eq 0 ]]; then
-                echo $msgPING OK
+                echo $msgPINGSuccess
         else
-                echo $msgPING KO
+                echo $msgPINGError
         fi
 
         if [[ $codeDNS -eq 0 ]]; then
-                echo $msgDNS OK
+                echo $msgDNSSuccess
         else
-                echo $msgDNS KO
+                echo $msgDNSError
         fi
 
 }
