@@ -26,6 +26,7 @@ changeHostname(){
 	if [[ $? -ne 0 ]];
 		echo Permission denied
 		exit 1
+	fi
 	echo $hostname >> /etc/hostname
 	if [[ $? == 0 ]]; then
 		echo Hostname change done. It will take effect after reboot
