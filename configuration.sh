@@ -23,10 +23,10 @@ ipDNS=$4
 
 changeHostname(){
 	sed -i 1d /etc/hostname
-	if [[ $? -ne 0 ]];
+	if [[ $? -ne 0 ]]; then
 		echo Permission denied
 		exit 1
-	elif
+	else	
 		echo $hostname >> /etc/hostname
 		if [[ $? == 0 ]]; then
 			echo Hostname change done. It will take effect after reboot
