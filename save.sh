@@ -10,6 +10,3 @@
 tar -cvf $1 $2
 scp $1 $3:$4@$5
 exit 0
-test
-
-aze
