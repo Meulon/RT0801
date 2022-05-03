@@ -22,11 +22,21 @@ IP=$3
 ipDNS=$4
 
 createDummyNIC(){
-	ip link show dummy0 &>/dev/null
+	ip link show qsd &>/dev/null
 	if [[ $? == 1 ]]; then
-		ip link add type dummy0
-		echo interface dummy0 created
+		ip link add qsd type dummy
+		echo interface qsd created
+	else
+		echo interface already created
 	fi 
+}
+
+checkHostname(){
+	currentHostname=$(cat /etc/hostname)
+	if [[ $currentHostname == $hostname ]]; then
+		echo no hostname change because this is the same hostname
+		exit 1
+	fi
 }
 
 changeHostname(){
@@ -50,9 +60,6 @@ checkNIC(){
 	if [[ $? == 1 ]]; then
 		echo NIC does not exist
 		exit 1
-	else
-		disableNIC
-		changeIPNIC
 fi
 }	
 
@@ -81,7 +88,7 @@ changeDNS(){
 
 
 testNET(){
-	msgPINGSuccess="test outside access: OK!"
+	msgPINGSuccess="test outside access: OK"
 	msgDNSSuccess="test DNS: OK"
 	msgPINGError="test outside access: NOK"
 	msgDNSError="test DNS: NOK"
@@ -106,10 +113,18 @@ testNET(){
 
 }
 
-changeHostname
-checkNIC
-disableNIC
-changeIPNIC
-enableNIC
-changeDNS
-testNET
+if [[ $# -lt 4 ]]; then
+	echo "arguments required : hostname, idNIC, IP, ipDNS"
+	echo example: tata qsd 192.168.1.24 8.8.8.8
+	exit 1
+else
+	createDummyNIC
+	checkHostname
+	changeHostname
+	checkNIC      
+	disableNIC    
+	changeIPNIC   
+	enableNIC     
+	changeDNS     
+	testNET
+fi	
