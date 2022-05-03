@@ -81,7 +81,7 @@ changeDNS(){
 
 
 testNET(){
-	msgPINGSuccess="test outside access: OK"
+	msgPINGSuccess="test outside access: OK!"
 	msgDNSSuccess="test DNS: OK"
 	msgPINGError="test outside access: NOK"
 	msgDNSError="test DNS: NOK"
