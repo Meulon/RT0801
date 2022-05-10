@@ -11,6 +11,15 @@
 
 archive=$1
 destinationDirectory=$2
-
-stat -L -c "%a %G %U"
-tar xvf $archive --directory=$destinationDirectory
+groupUser=$(groups)
+echo $groupUser
+ownerArchive=$(stat -L -c "%U" $archive)
+groupOwnerArchive=$(stat -L -c "%G" $archive)
+accessRights=$(stat -L -c "%a" $archive)
+#ownerArchive=$(stat -L -c "%a %G %U" $archive)
+if [[ $ownerArchive == $USER || $groupOwnerArchive == *"$groupUser"* ]]; then
+	if [[ $accessRights == 6** ]]; then
+		echo yes
+	fi
+	tar xvf $archive --directory=$destinationDirectory
+fi
