@@ -12,4 +12,5 @@
 archive=$1
 destinationDirectory=$2
 
+stat -L -c "%a %G %U"
 tar xvf $archive --directory=$destinationDirectory
